@@ -37,8 +37,8 @@ def main():
                 well = Well.from_las(las_file_url)
                 
                 # Button to display LAS file data
-                if st.button("Show LAS File Data"):
-                    st.write("Loaded LAS file successfully.")
+                if st.button("Show well-logged floor"):
+                    st.write("Loaded LAS file curves successfully.")
                     st.pyplot(well.plot(extents='curves'))
 
                 # Load survey data from CSV file
