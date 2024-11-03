@@ -11,7 +11,6 @@ from welly import Well
 from IPython.display import HTML
 from welly import Location
 import pkg_resources
-import requests
 
 # Main function to run the app
 # Main function to run the app
@@ -23,7 +22,7 @@ def main():
 
     # Set local file paths for LAS and CSV files for single well analysis
     las_file_url = 'https://raw.githubusercontent.com/Youssef1Rezk/well-trajectory/main/L05-15-Spliced.las'
-    csv_file_url = 'https://raw.githubusercontent.com/Youssef1Rezk/well-trajectory/main/L05-15-Survey.csv
+    csv_file_url = 'https://raw.githubusercontent.com/Youssef1Rezk/well-trajectory/main/L05-15-Survey.csv'
 
     # Create an empty placeholder for category content
     content_placeholder = st.empty()
@@ -35,7 +34,7 @@ def main():
 
             try:
                 # Load LAS data using Welly
-                well = Well.from_las(las_file_path)
+                well = Well.from_las(las_file_url)
                 
                 # Button to display LAS file data
                 if st.button("Show LAS File Data"):
@@ -43,7 +42,7 @@ def main():
                     st.pyplot(well.plot(extents='curves'))
 
                 # Load survey data from CSV file
-                survey = pd.read_csv(csv_file_path)
+                survey = pd.read_csv(csv_file_url)
 
                 # Button to display survey data
                 if st.button("Show Survey Data"):
@@ -147,23 +146,31 @@ def main():
             except FileNotFoundError:
                 st.error("One or both of the required files were not found. Please ensure the paths are correct.")
 
+   # Multi Well Analysis
     elif category == "Multi Well Analysis":
         with content_placeholder.container():
             st.header("Multi Well Analysis")
             time.sleep(0.5)  # Wait for half a second to simulate animation
             
-            # Load wells using Project
-            wells = Project.from_las('all wells/*.las')
+            # List of well file URLs
+            well_file_urls = [
+            'https://raw.githubusercontent.com/Youssef1Rezk/well-trajectory/refs/heads/main/all%20wells%E2%80%9C/L0509_comp%20(1).las',
+            'https://raw.githubusercontent.com/Youssef1Rezk/well-trajectory/refs/heads/main/all%20wells%E2%80%9C/NLOG_LIS_LAS_2048_8636_l0606_2004_comp.las',
+            'https://raw.githubusercontent.com/Youssef1Rezk/well-trajectory/refs/heads/main/all%20wells%E2%80%9C/NLOG_LIS_LAS_2629_8971_l0607_2009_comp.las',
+            'https://raw.githubusercontent.com/Youssef1Rezk/well-trajectory/refs/heads/main/all%20wells%E2%80%9C/NLOG_LIS_LAS_3164_7264_l0701_1971_comp.las'
+         ]
+
+            # Load wells using Project from URLs
+            wells = [Well.from_las(url) for url in well_file_urls]
             st.write(f"Loaded {len(wells)} wells.")
 
             well_dict = {}
             for well in wells:
-                if isinstance(well, Well):  # Check if it's a Well instance
-                    well_dict[well.uwi] = {
-                        'well name': well.name, 
-                        'Latitude': well.location.latitude,  # Accessing latitude directly
-                        'Longitude': well.location.longitude  # Accessing longitude directly
-                    }
+                well_dict[well.uwi] = {
+                    'well name': well.name, 
+                    'Latitude': well.location.latitude,  
+                    'Longitude': well.location.longitude  
+                }
 
             wells_df = pd.DataFrame.from_dict(well_dict, orient='index')
             wells_df.reset_index(inplace=True)
@@ -182,6 +189,9 @@ def main():
 
             st.subheader("Well Locations Map")
             st.components.v1.html(m._repr_html_(), height=500, scrolling=True)
+
+        # Continue with plotting GR, RHOB, NPHI, and quality control tests as before...
+
 
             # Plot GR from all wells
             fig, axs = plt.subplots(figsize=(14, 10), ncols=len(wells))
@@ -222,27 +232,24 @@ def main():
                     wq.all_positive,
                     wq.all_between(0, 250),
                     wq.check_units(['API', 'GAPI']),
-                ],'RHOB': [
+                ],
+                'RHOB': [
                     wq.all_positive,
                     wq.all_between(1.5, 3),
                     wq.check_units(['G/CC', 'g/cm3']),
                 ]
             }
 
-            data_qc_table = wells.curve_table_html(keys=['GR', 'RHOB'], tests=tests)
-            st.subheader("Data Quality Control")
-            st.write(HTML(data_qc_table), unsafe_allow_html=True)
-
+            # Create a quality control table for each well individually
             qc_dict = {}
             for well in wells:
-                qc_dict[well.name] = well.qc_table_html(tests)
+                qc_table_html = well.qc_table_html(tests)
+                qc_dict[well.name] = qc_table_html
 
-            st.write("Quality Control for specific wells:")
+            # Display Data Quality Control
+            st.subheader("Data Quality Control")
             for well_name, qc_html in qc_dict.items():
                 st.write(f"### {well_name}")
                 st.write(HTML(qc_html), unsafe_allow_html=True)
-
-            
-
 if __name__ == "__main__":
     main()
