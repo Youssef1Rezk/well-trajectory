@@ -22,8 +22,8 @@ def main():
     category = st.sidebar.radio("Select Analysis Category", ("Single Well Location", "Multi Well Analysis"))
 
     # Set local file paths for LAS and CSV files for single well analysis
-    las_file_path = 'F:/horizontal drilling/L05-15-Spliced.las'
-    csv_file_path = 'F:/horizontal drilling/L05-15-Survey.csv'
+    las_file_url = 'https://raw.githubusercontent.com/Youssef1Rezk/well-trajectory/main/L05-15-Spliced.las'
+    csv_file_url = 'https://raw.githubusercontent.com/Youssef1Rezk/well-trajectory/main/L05-15-Survey.csv
 
     # Create an empty placeholder for category content
     content_placeholder = st.empty()
