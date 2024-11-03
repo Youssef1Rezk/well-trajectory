@@ -1,6 +1,6 @@
-streamlit>=1.2.0
-pandas==2.2.3
-matplotlib==3.8.4
-welly==0.5.0
-folium==0.18.0
-wellpathpy
+streamlit>=1.0.0
+pandas
+matplotlib
+welly
+folium
+wellpathpy  # Make sure this is included
