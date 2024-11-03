@@ -10,6 +10,8 @@ import welly.quality as wq
 from welly import Well
 from IPython.display import HTML
 from welly import Location
+import pkg_resources
+
 # Main function to run the app
 # Main function to run the app
 def main():
