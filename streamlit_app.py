@@ -13,7 +13,20 @@ from welly import Location
 import pkg_resources
 
 # Main function to run the app
-# Main function to run the app
+# Caching function to load LAS file
+@st.cache_data
+def load_well_from_las(las_file_url):
+    return Well.from_las(las_file_url)
+
+# Caching function to load survey data from CSV
+@st.cache_data
+def load_survey_data(csv_file_url):
+    return pd.read_csv(csv_file_url)
+
+# Caching function to load multiple wells
+@st.cache_resource
+def load_multiple_wells(well_file_urls):
+    return [Well.from_las(url) for url in well_file_urls]
 def main():
     st.title("Horizontal Drilling Trajectory Visualization")
 
