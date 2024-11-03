@@ -11,6 +11,7 @@ from welly import Well
 from IPython.display import HTML
 from welly import Location
 import pkg_resources
+import requests
 
 # Main function to run the app
 # Main function to run the app
