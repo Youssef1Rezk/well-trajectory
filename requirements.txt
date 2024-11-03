@@ -4,3 +4,4 @@ matplotlib
 welly
 folium
 wellpathpy  # Make sure this is included
+setuptools
