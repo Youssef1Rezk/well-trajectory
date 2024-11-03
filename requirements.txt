@@ -6,3 +6,4 @@ folium
 wellpathpy  # Make sure this is included
 setuptools
 ipython
+requests
